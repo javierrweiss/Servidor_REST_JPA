@@ -1,0 +1,98 @@
+    Api Clientes
+        /clientes/v1
+
+Alta cliente
+/alta
+
+Parámetros de entrada
+nombre,
+apellido,
+tipoDocumento 'DNI', 'LC', 'LE', 'Pasaporte',
+numeroDocumento,
+direccion,
+comentarios
+
+Parámetro de salida
+id/0
+
+Baja Cliente
+/baja
+
+Parámetro de entrada id
+Parámetro de salida true/false
+
+GetAll
+/all
+Parámetro de salida List<Cliente>
+
+getLikeApellido
+/likeApellido
+Parámetro de entrada apellido
+Parámetro de salida List<Cliente>
+
+
+    Api Facturas
+        /facturas/v1
+
+Alta Factura
+/alta
+Parámetros de entrada letra, número, fecha, monto, idCliente
+Parámetro de salida true/false
+
+Baja Factura
+/baja
+parámetros de entrada letra, número
+parámetros de salida true/false
+
+getAll
+/getAll
+Parámetro de salida List<Factura>
+
+getLikeCliente
+/getLikeCliente
+Parámetros de entrada idCliente
+Parámetros de salida List<Factura>
+
+
+    Api Artículos
+        /articulos/v1
+
+Alta Artículo
+/alta
+Parámetros de entrada descripción, costo, precio, stock, stockMin, stockMax
+Parámetro de salida id/0
+
+Baja Artículo
+/baja
+Parámetro de entrada id
+parámetro de salida true/false
+
+getAll
+/getAll
+Parámetros de salida List<Articulo>
+
+getLikeDescripcion
+/getLikeDescripcion
+Parámetro de entrada descripción
+Parámetro de salida List<Articulo>
+
+    Api Detalle
+        /detalle/v1
+
+Alta Detalle
+/alta
+Parámetro de entrada idFactura, idArticulo, precio, cantidad
+Parámetro de salida true/false
+
+Baja
+/baja
+Parámetro de entrada idArticulo, idFactura
+Parámetro de salida true/false
+
+getAll
+/getAll
+Parámetro de salida List<Detalle>
+
+getLikeFactura
+/getLikeFactura
+Parámetro de entrada idFactura
