@@ -68,7 +68,9 @@ public class ArticuloServicio {
     @Path("/baja")
     @Produces(MediaType.TEXT_HTML)
     public Response baja(@QueryParam("id") int id){
-        em.remove(em.find(Articulo.class, id));
+        Articulo articulo = em.find(Articulo.class, id);
+        em.merge(articulo);
+        em.remove(articulo);
         return Response.ok("true").build();
        }
         

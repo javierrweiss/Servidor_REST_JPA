@@ -1,6 +1,7 @@
 package ar.org.centro8.curso.java.aplicaciones.jpa.repositories;
 
 import ar.org.centro8.curso.java.aplicaciones.entities.Cliente;
+import ar.org.centro8.curso.java.aplicaciones.entities.Factura;
 import ar.org.centro8.curso.java.aplicaciones.jpa.interfaces.I_ClienteRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,5 +56,9 @@ public class ClienteRepository implements I_ClienteRepository{
         return lista_clientes;
     }
     
-    
+    public List<Factura> getFacturaList(int id){
+       return  em.createQuery("SELECT f FROM Factura f WHERE f.idCliente.id = :id", Factura.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
 }

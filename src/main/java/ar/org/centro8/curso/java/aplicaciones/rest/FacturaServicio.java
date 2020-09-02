@@ -25,6 +25,7 @@ public class FacturaServicio {
 private EntityManager em;
 
     @GET
+    @Produces(MediaType.TEXT_PLAIN)
     public String info(){
         return "Servicio de Facturas activo";
     }
@@ -43,21 +44,36 @@ private EntityManager em;
                                       Integer.parseInt(numero),
                                       fecha,
                                       Double.parseDouble(monto),
-                                      cliente);
+                                      cliente
+                                        );
+        em.merge(cliente);
         em.persist(factura);
-        
         return Response.ok(factura).build();
     }
     
     /*
     Test
-    ?letra=A&numero=15&fecha=21022019&monto=9000&idCliente=1
+    ?letra=A&numero=15&fecha=21/02/2019&monto=9000&idCliente=1
+    
+    La fecha siempre debe ir en el siguiente formato dd/mm/yy
     */
     
     @GET
     @Path("/baja")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response baja(@QueryParam("letra") Character letra, @QueryParam("numero") int numero){
-        em.remove(em.find(Factura.class, numero).getLetra().compareTo(letra));
+           Factura factura = em.createNamedQuery("Factura.findByLetraYNumero", Factura.class)
+                            .setParameter("letra", letra)
+                            .setParameter("numero", numero)
+                            .getResultList()//Pedimos una lista, ya que puede darse el caso de una factura con igual número y letra;
+                            .get(0); //Obtenemos el primero, y lo pasamos al método remove abajo.
+                                    
+           try {
+           em.merge(factura);
+           em.remove(factura); 
+        } catch (Exception e) {
+        return Response.ok("false").build();
+        }
         return Response.ok("true").build();
     }
     
@@ -78,9 +94,9 @@ private EntityManager em;
     @Path("/getLikeCliente")
     public Response getLikeCliente(@QueryParam("idCliente") int idCliente){
         List<Factura> lista_facturas_por_cliente = new ArrayList<Factura>();
-        lista_facturas_por_cliente = em.createNamedQuery("Factura.findLikeCliente")
-                .setParameter("idCliente", idCliente)
-                .getResultList();
+        lista_facturas_por_cliente = em.createQuery("SELECT f FROM Factura f WHERE f.idCliente.id = :id", Factura.class)
+                                       .setParameter("id", idCliente)
+                                       .getResultList();
         return Response.ok(lista_facturas_por_cliente).build();
     }
 

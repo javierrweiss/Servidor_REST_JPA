@@ -1,7 +1,9 @@
 package ar.org.centro8.curso.java.aplicaciones.rest;
 
+import ar.org.centro8.curso.java.aplicaciones.entities.Articulo;
 import ar.org.centro8.curso.java.aplicaciones.entities.Detalle;
 import ar.org.centro8.curso.java.aplicaciones.entities.DetallePK;
+import ar.org.centro8.curso.java.aplicaciones.entities.Factura;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -26,6 +28,7 @@ public class DetalleServicio {
     private EntityManager em;
     
     @GET
+    @Produces(MediaType.TEXT_PLAIN)
     public String info() {
         return "Servicio de Detalles activo";
     }
@@ -34,15 +37,18 @@ public class DetalleServicio {
     @Path("/alta")
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response alta(@QueryParam("idFactura") String idFactura,
-            @QueryParam("idArticulo") String idArticulo,
-            @QueryParam("precio") String precio,
-            @QueryParam("cantidad") String cantidad) {
-        DetallePK detallePK = new DetallePK(Integer.parseInt(idFactura),
-                Integer.parseInt(idArticulo));
+    public Response alta(@QueryParam("idFactura") int idFactura,
+            @QueryParam("idArticulo") int idArticulo,
+            @QueryParam("precio") float precio,
+            @QueryParam("cantidad") int cantidad) {
+        DetallePK detallePK = new DetallePK(idFactura,idArticulo);
         Detalle detalle = new Detalle(detallePK,
-                Float.parseFloat(precio),
-                Integer.parseInt(cantidad));
+                                        precio,
+                                        cantidad);
+        Factura factura = em.find(Factura.class, idFactura);
+        Articulo articulo= em.find(Articulo.class, idArticulo);
+        em.merge(factura);
+        em.merge(articulo);
         em.persist(detalle);
         return Response.ok(detalle).build();
         
@@ -50,27 +56,30 @@ public class DetalleServicio {
 
     /*
     Test
-    ?idFactura=1&idArticulo=1&precio=40000&cantidad=200
+    ?idFactura=1&idArticulo=21&precio=40000&cantidad=200
      */
     @GET
     @Path("/baja")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response baja(@QueryParam("idFactura") String idFactura,
                          @QueryParam("idArticulo") String idArticulo) {
         DetallePK detallePK = new DetallePK(Integer.parseInt(idFactura),
                                             Integer.parseInt(idArticulo));
-        em.remove(em.find(Detalle.class, detallePK));
+        Detalle detalle = em.find(Detalle.class, detallePK);
+        em.merge(detalle);
+        em.remove(detalle);
         return Response.ok("true").build();
     }
 
     /*
     Test
-    ?idFactura=1&idArticulo=1
+    ?idFactura=1&idArticulo=21
      */
     @GET
     @Path("/getAll")
     public Response getAll() {
         List<Detalle> lista_detalles = new ArrayList<>();
-        lista_detalles =em.createNamedQuery("Detalle.findAll").getResultList();
+        lista_detalles = em.createNamedQuery("Detalle.findAll").getResultList();
         return Response.ok(lista_detalles).build();        
     }
     
@@ -78,7 +87,7 @@ public class DetalleServicio {
     @Path("/getLikeFactura")
     public Response getLikeFactura(@QueryParam("idFactura") int idFactura) {
         List<Detalle> lista_detalles_por_factura = new ArrayList<>();
-        lista_detalles_por_factura = em.createNamedQuery("Detalle.findByIdFactura")
+        lista_detalles_por_factura = em.createQuery("SELECT d FROM Detalle d WHERE d.factura.id = :idFactura", Detalle.class)
                                        .setParameter("idFactura", idFactura)
                                        .getResultList();
         return Response.ok(lista_detalles_por_factura).build();

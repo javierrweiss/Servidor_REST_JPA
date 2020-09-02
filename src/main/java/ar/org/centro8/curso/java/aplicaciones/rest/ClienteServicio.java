@@ -24,6 +24,7 @@ public class ClienteServicio {
     EntityManager em;
     
     @GET
+    @Produces(MediaType.TEXT_PLAIN)
     public String info(){
         return "Servicio de Clientes activo";
     }
@@ -56,8 +57,11 @@ public class ClienteServicio {
     
     @GET
     @Path("baja")
+    @Produces(MediaType.TEXT_PLAIN)
     public Response baja(@QueryParam("id")int id){
-        em.remove(em.find(Cliente.class, id));
+        Cliente cliente = em.find(Cliente.class, id);
+        em.merge(cliente);
+        em.remove(cliente);
         return Response.ok("true").build();
     }
    /*

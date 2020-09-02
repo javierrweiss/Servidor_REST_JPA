@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context path="/ServerA">
+<Context path="/Servidor_REST_JPA">
   <Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="negociowebFINAL" password="josejavier 1984" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/negocioweb?zeroDateTimeBehavior=CONVERT_TO_NULL" username="josejavier"/>
 </Context>
