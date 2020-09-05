@@ -1,15 +1,15 @@
 package ar.org.centro8.curso.java.aplicaciones.jpa.interfaces;
 
+import ar.org.centro8.curso.java.aplicaciones.entities.Cliente;
 import ar.org.centro8.curso.java.aplicaciones.entities.Factura;
 import java.util.List;
-import java.util.function.Supplier;
 
 public interface I_FacturaRepository {
 void save(Factura factura);
 void remove(Factura factura);
 void update(Factura factura);
 List<Factura> getAll();
-Supplier<Factura> F= () -> new Factura();
+List<Factura> getLikeCliente(Cliente IdCliente);
      
 default Factura getById(int id){
   return getAll()

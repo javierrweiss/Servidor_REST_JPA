@@ -1,12 +1,11 @@
 package ar.org.centro8.curso.java.aplicaciones.rest;
 
 import ar.org.centro8.curso.java.aplicaciones.entities.Cliente;
-import java.util.ArrayList;
+import ar.org.centro8.curso.java.aplicaciones.jpa.interfaces.I_ClienteRepository;
+import ar.org.centro8.curso.java.aplicaciones.jpa.repositories.ClienteRepository;
 import java.util.List;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -18,14 +17,14 @@ import javax.ws.rs.core.Response;
 @Path("clientes/v2")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Stateless
 public class ClienteServicio {
-    @PersistenceContext(unitName = "JPAPU", type = PersistenceContextType.TRANSACTION)
-    EntityManager em;
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAPU");
+    private final I_ClienteRepository cr = new ClienteRepository(emf.createEntityManager());
     
     @GET
-    public String info(){
-        return "Servicio de Clientes activo";
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response info(){
+        return Response.ok("Servicio de Clientes activo").build();
     }
     
     @GET
@@ -45,8 +44,13 @@ public class ClienteServicio {
                         numeroDocumento,
                         direccion,
                         comentarios);   
-        em.persist(cliente);
-    return Response.ok(cliente).build();
+        try {
+            cr.save(cliente);
+        } catch (Exception e) {
+            return Response.ok(0).build();
+        }
+        
+    return Response.ok(cliente.getId()).build();
     }
     
     /*
@@ -56,8 +60,15 @@ public class ClienteServicio {
     
     @GET
     @Path("baja")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response baja(@QueryParam("id")int id){
-        em.remove(em.find(Cliente.class, id));
+        Cliente cliente = cr.getById(id);
+        try {
+            cr.remove(cliente);
+        } catch (Exception e) {
+            return Response.ok("false").build();
+        }
+        
         return Response.ok("true").build();
     }
    /*
@@ -68,18 +79,17 @@ public class ClienteServicio {
     
     @GET
     @Path("getAll")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
-        List<Cliente> lista_clientes = new ArrayList<>();
-        lista_clientes =em.createNamedQuery("Cliente.findAll").getResultList();
+        List<Cliente> lista_clientes = cr.getAll();
         return Response.ok(lista_clientes).build();
     }
     
     @GET
     @Path("getLikeApellido")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLikeApellido(@QueryParam("apellido") String apellido){
-      List<Cliente> lista_clientes_por_apellido = new ArrayList<>();
-      lista_clientes_por_apellido =em.createNamedQuery("Cliente.findByApellido")
-              .setParameter("apellido", apellido).getResultList();
+      List<Cliente> lista_clientes_por_apellido = cr.getLikeApellido(apellido);
         return Response.ok(lista_clientes_por_apellido).build();
         }
     /*

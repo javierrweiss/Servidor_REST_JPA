@@ -2,7 +2,6 @@ package ar.org.centro8.curso.java.aplicaciones.jpa.repositories;
 
 import ar.org.centro8.curso.java.aplicaciones.entities.Articulo;
 import ar.org.centro8.curso.java.aplicaciones.jpa.interfaces.I_ArticuloRepository;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -50,8 +49,8 @@ private EntityManager em;
 
     @Override
     public List<Articulo> getAll() {
-        List<Articulo> lista_articulos =new ArrayList<>();
-        lista_articulos=em.createNamedQuery("Articulo.findAll").getResultList();
+        List<Articulo> lista_articulos=em.createNamedQuery("Articulo.findAll")
+                                         .getResultList();
         return lista_articulos;
     }
     

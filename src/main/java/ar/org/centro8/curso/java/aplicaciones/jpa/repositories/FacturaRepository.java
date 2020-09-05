@@ -1,5 +1,6 @@
 package ar.org.centro8.curso.java.aplicaciones.jpa.repositories;
 
+import ar.org.centro8.curso.java.aplicaciones.entities.Cliente;
 import ar.org.centro8.curso.java.aplicaciones.entities.Factura;
 import ar.org.centro8.curso.java.aplicaciones.jpa.interfaces.I_FacturaRepository;
 import java.util.ArrayList;
@@ -53,6 +54,14 @@ public class FacturaRepository implements I_FacturaRepository{
      List<Factura> lista_facturas = new ArrayList<>();
      lista_facturas=em.createNamedQuery("Factura.findAll").getResultList();
      return lista_facturas;
+    }
+
+    @Override
+    public List<Factura> getLikeCliente(Cliente idCliente) {
+    List<Factura> lista_facturas_por_cliente = em.createNamedQuery("Factura.findLikeCliente")
+                                                 .setParameter("idCliente", idCliente)
+                                                 .getResultList();
+    return lista_facturas_por_cliente;
     }
     
     

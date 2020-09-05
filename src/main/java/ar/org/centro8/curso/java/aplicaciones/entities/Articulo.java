@@ -1,33 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ar.org.centro8.curso.java.aplicaciones.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author josejavier
- */
 @Entity
 @Table(name = "articulos")
 @XmlRootElement
@@ -64,8 +50,6 @@ public class Articulo implements Serializable {
     private Integer stockMin;
     @Column(name = "stockMax")
     private Integer stockMax;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "articulo", fetch = FetchType.LAZY)
-    private List<Detalle> detalleList;
 
     public Articulo() {
     }
@@ -87,7 +71,6 @@ public class Articulo implements Serializable {
         this.stockMin = stockMin;
         this.stockMax = stockMax;
     }
-    
 
     public Integer getId() {
         return id;
@@ -143,15 +126,6 @@ public class Articulo implements Serializable {
 
     public void setStockMax(Integer stockMax) {
         this.stockMax = stockMax;
-    }
-
-    @XmlTransient
-    public List<Detalle> getDetalleList() {
-        return detalleList;
-    }
-
-    public void setDetalleList(List<Detalle> detalleList) {
-        this.detalleList = detalleList;
     }
 
     @Override

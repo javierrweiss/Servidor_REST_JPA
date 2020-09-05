@@ -24,7 +24,7 @@ public class TestRepository {
     Para que este test funcione hay que configurar una non-jta-datasource en el persistence .xmlque igualmente no estaríamos usando.
     */
     public static void main(String[] args) {
-//        EntityManagerFactory emf =Persistence.createEntityManagerFactory("JPAPU");
+          EntityManagerFactory emf =Persistence.createEntityManagerFactory("JPAPU");
 //        I_ClienteRepository cr=new ClienteRepository(emf.createEntityManager());
 //        cr.getById(1).getFacturaList().forEach(System.out::println);
 //        Cliente cliente=new Cliente("Juan", "Mosa", "DNI", "123336", "Las Palmas 501", "Ninguno");
@@ -38,19 +38,20 @@ public class TestRepository {
 //        System.out.println("1: "+cliente+"\n 2: "+cliente1+"\n 3: "+cliente2+"\n 4: "+cliente3);
 //        cr.getAll().forEach(System.out::println);
 //        
-////        Articulo articulo = new Articulo("Pasamontañas",200.50f, 250.00f, 200, 300, 500);
-////        ar.save(articulo);
-////        Articulo articulo1 = new Articulo("Pipa",450.76f, 500.00f,200, 10, 1000);
-////        ar.save(articulo1);
-////        Articulo articulo2 = new Articulo("Reproductor",200000.54f, 215000.00f, 20, 3, 100);
-////        ar.save(articulo2);
-////        Articulo articulo3 = new Articulo("MacBook Air",180000.50f, 200000.23f, 20, 1, 30);
-////        ar.save(articulo3);
-////        Articulo articulo4 = new Articulo("Escritorio",20340.99f, 25000.00f, 2, 1, 10);
-////        ar.save(articulo4);
-////        System.out.println("1: "+articulo+"\n 2: "+articulo1+"\n 3: "+articulo2+"\n 4: "+articulo3
-////        +"\n 5: "+articulo4);
-////        ar.getAll().forEach(System.out::println);
+        I_ArticuloRepository ar = new ArticuloRepository(emf.createEntityManager());
+        Articulo articulo = new Articulo("Pasamontañas",200.50f, 250.00f, 200, 300, 500);
+        ar.save(articulo);
+        Articulo articulo1 = new Articulo("Pipa",450.76f, 500.00f,200, 10, 1000);
+        ar.save(articulo1);
+        Articulo articulo2 = new Articulo("Reproductor",200000.54f, 215000.00f, 20, 3, 100);
+        ar.save(articulo2);
+        Articulo articulo3 = new Articulo("MacBook Air",180000.50f, 200000.23f, 20, 1, 30);
+        ar.save(articulo3);
+        Articulo articulo4 = new Articulo("Escritorio",20340.99f, 25000.00f, 2, 1, 10);
+        ar.save(articulo4);
+        System.out.println("1: "+articulo+"\n 2: "+articulo1+"\n 3: "+articulo2+"\n 4: "+articulo3
+        +"\n 5: "+articulo4);
+        ar.getAll().forEach(System.out::println);
 ////        
 //        I_FacturaRepository fr=new FacturaRepository(emf.createEntityManager());
 //        Factura factura = new Factura('A', 1000,"20/03/2020",1000.00, cr.getById(1));

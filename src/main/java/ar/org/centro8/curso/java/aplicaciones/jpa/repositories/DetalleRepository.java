@@ -54,6 +54,14 @@ public class DetalleRepository implements I_DetalleRepository {
         lista_detalles=em.createNamedQuery("Detalle.findAll").getResultList();
         return lista_detalles;
     }
+
+    @Override
+    public List<Detalle> getLikeFactura(int idFactura) {
+    List<Detalle> lista_facturas = em.createNamedQuery("Detalle.findByIdFactura")
+                                     .setParameter("idFactura", idFactura)
+                                     .getResultList();
+    return lista_facturas;
+    }
     
     
    

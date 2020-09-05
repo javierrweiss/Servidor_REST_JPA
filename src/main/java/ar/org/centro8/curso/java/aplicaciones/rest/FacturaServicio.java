@@ -2,12 +2,13 @@ package ar.org.centro8.curso.java.aplicaciones.rest;
 
 import ar.org.centro8.curso.java.aplicaciones.entities.Cliente;
 import ar.org.centro8.curso.java.aplicaciones.entities.Factura;
-import java.util.ArrayList;
+import ar.org.centro8.curso.java.aplicaciones.jpa.interfaces.I_ClienteRepository;
+import ar.org.centro8.curso.java.aplicaciones.jpa.interfaces.I_FacturaRepository;
+import ar.org.centro8.curso.java.aplicaciones.jpa.repositories.ClienteRepository;
+import ar.org.centro8.curso.java.aplicaciones.jpa.repositories.FacturaRepository;
 import java.util.List;
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,14 +20,14 @@ import javax.ws.rs.core.Response;
 @Path("facturas/v2")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-@Stateless
 public class FacturaServicio {
-@PersistenceContext(unitName = "JPAPU", type =PersistenceContextType.TRANSACTION)
-private EntityManager em;
-
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAPU");
+    I_FacturaRepository fr = new FacturaRepository(emf.createEntityManager());
+    
     @GET
-    public String info(){
-        return "Servicio de Facturas activo";
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response info(){
+        return Response.ok("Servicio de Facturas activo").build();
     }
     
     @GET
@@ -37,16 +38,21 @@ private EntityManager em;
                        @QueryParam("numero") String numero,
                        @QueryParam("fecha") String fecha,
                        @QueryParam("monto") String monto,
-                       @QueryParam("idCliente") String idCliente){
-        Cliente cliente = em.find(Cliente.class, Integer.parseInt(idCliente));
+                       @QueryParam("idCliente") int idCliente){
+        I_ClienteRepository cr = new ClienteRepository(emf.createEntityManager());    
+        Cliente cliente = cr.getById(idCliente);
         Factura factura = new Factura(letra,
                                       Integer.parseInt(numero),
                                       fecha,
                                       Double.parseDouble(monto),
                                       cliente);
-        em.persist(factura);
-        
-        return Response.ok(factura).build();
+        try {
+        fr.save(factura);    
+        } catch (Exception e) {
+        return Response.ok("false").build();
+        }
+                
+        return Response.ok("true").build();
     }
     
     /*
@@ -56,8 +62,15 @@ private EntityManager em;
     
     @GET
     @Path("/baja")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response baja(@QueryParam("letra") Character letra, @QueryParam("numero") int numero){
-        em.remove(em.find(Factura.class, numero).getLetra().compareTo(letra));
+        Factura factura = fr.getByLetra_Numero(letra, numero);
+        try {
+            fr.remove(factura);
+        } catch (Exception e) {
+        return Response.ok("false").build();
+        }
+        
         return Response.ok("true").build();
     }
     
@@ -68,19 +81,19 @@ private EntityManager em;
     
     @GET
     @Path("/getAll")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getAll(){
-        List<Factura> lista_facturas = new ArrayList<Factura>();
-        lista_facturas = em.createNamedQuery("Factura.findAll").getResultList();
+        List<Factura> lista_facturas = fr.getAll();
         return Response.ok(lista_facturas).build();
     }
     
     @GET
     @Path("/getLikeCliente")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response getLikeCliente(@QueryParam("idCliente") int idCliente){
-        List<Factura> lista_facturas_por_cliente = new ArrayList<Factura>();
-        lista_facturas_por_cliente = em.createNamedQuery("Factura.findLikeCliente")
-                .setParameter("idCliente", idCliente)
-                .getResultList();
+        I_ClienteRepository cr = new ClienteRepository(emf.createEntityManager());
+        Cliente cliente =cr.getById(idCliente);
+        List<Factura> lista_facturas_por_cliente = fr.getLikeCliente(cliente);
         return Response.ok(lista_facturas_por_cliente).build();
     }
 
