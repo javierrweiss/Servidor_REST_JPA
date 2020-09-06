@@ -55,8 +55,7 @@ public class Articulo implements Serializable {
     private Integer stockMin;
     @Column(name = "stockMax")
     private Integer stockMax;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "articulo", fetch = FetchType.LAZY)
-    private List<Detalle> detalleList;
+    
 
     public Articulo() {
     }
@@ -135,16 +134,7 @@ public class Articulo implements Serializable {
     public void setStockMax(Integer stockMax) {
         this.stockMax = stockMax;
     }
-
-    @XmlTransient
-    public List<Detalle> getDetalleList() {
-        return detalleList;
-    }
-
-    public void setDetalleList(List<Detalle> detalleList) {
-        this.detalleList = detalleList;
-    }
-
+   
     @Override
     public int hashCode() {
         int hash = 0;
